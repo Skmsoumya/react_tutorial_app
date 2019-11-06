@@ -4,7 +4,7 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square"
+    <button className={`square ${props.highlighted ? "isWinningPosition" : ""}`}
             onClick={props.onClick}>
       {props.value}          
     </button>
@@ -13,9 +13,11 @@ function Square(props) {
 
 class Board extends React.Component {
    renderSquare(i) {
+     const isHighlightedSquare = this.props.winningPosition && this.props.winningPosition.indexOf(i) > -1;
     return (
       <Square value={this.props.squares[i]} 
               onClick={() => this.props.onClick(i)}
+              highlighted={isHighlightedSquare}
       />);
   }
 
@@ -64,7 +66,7 @@ class Game extends React.Component {
     
     const squares = current.squares.slice();
 
-    if(calculateWinner(squares) || squares[i]) {
+    if(calculateWinner(squares).winner || squares[i]) {
       return;
     }
 
@@ -89,7 +91,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const {winner, winningPosition } = calculateWinner(current.squares);
 
     let moves = history.map((steps, moveNum) => {
       const desc = moveNum ? `Go to move #: ${moveNum} (${getColumnPositionFromMovePosition(moveNum)}, ${getRowPositionFromMovePosition(moveNum)})` : "Go to game Start";
@@ -122,6 +124,7 @@ class Game extends React.Component {
         <div className="game-board">
           <Board  squares={current.squares}
                   onClick={(i) => { this.handleClick(i) }}
+                  winningPosition={winningPosition}
           />
         </div>
         <div className="game-info">
@@ -161,10 +164,13 @@ function calculateWinner(squares) {
   for (let index = 0; index < lines.length; index++) {
     const [a,b,c] = lines[index];
     if(squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
-      return squares[a];
+      return { 
+        winner: squares[a],
+        winningPosition: [a,b,c]
+      }
     }
   }
-  return null;
+  return {};
 }
 
 

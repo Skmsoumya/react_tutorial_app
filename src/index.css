@@ -52,4 +52,8 @@ body {
   .bold, .bold button {
     font-weight: bold;
   }
+
+  .isWinningPosition {
+    color: red;
+  }
   
