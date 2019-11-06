@@ -49,7 +49,8 @@ class Game extends React.Component {
         squares: Array(9).fill(null)
       }],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      squaresFilled: 0
     }
   }
 
@@ -78,7 +79,8 @@ class Game extends React.Component {
       }),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-      isShowingMovesAscending: true
+      isShowingMovesAscending: true,
+      squaresFilled: this.state.squaresFilled + 1,
     });
   }
 
@@ -107,6 +109,9 @@ class Game extends React.Component {
     let status;
     if(winner) {
       status = `Winner: ${winner}`;
+    }
+    else if(this.state.squaresFilled === 9) {
+      status = `The Result Is A Draw`;
     }
     else {
       status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
